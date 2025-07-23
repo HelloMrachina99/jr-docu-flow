@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
 import { useToast } from '@/hooks/use-toast'
 import { FileText, Users, BookOpen } from 'lucide-react'
 
@@ -50,7 +50,9 @@ export function AuthForm() {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const fullName = formData.get('fullName') as string
-    const userType = formData.get('userType') as 'admin' | 'member'
+    
+    // Detect user type based on email
+    const userType = email.endsWith('@admin') ? 'admin' : 'member'
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -186,26 +188,12 @@ export function AuthForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-usertype">Tipo de Usuário</Label>
-                    <Select name="userType" required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="member">
-                          <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4" />
-                            Membro
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="admin">
-                          <div className="flex items-center gap-2">
-                            <BookOpen className="h-4 w-4" />
-                            Administrador
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label>Tipo de Usuário</Label>
+                    <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <p className="font-medium text-blue-800 mb-1">Detecção Automática</p>
+                      <p>• Use <span className="font-mono bg-white px-1 rounded">@admin</span> no final do e-mail para acesso administrativo</p>
+                      <p>• Outros e-mails serão considerados membros automaticamente</p>
+                    </div>
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Criando conta...' : 'Criar conta'}
