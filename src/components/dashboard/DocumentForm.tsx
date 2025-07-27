@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
-import { Database } from '@/lib/supabase'
+import type { Database } from '@/integrations/supabase/types'
 
 type Document = Database['public']['Tables']['documents']['Row']
 
@@ -33,8 +33,8 @@ export function DocumentForm({ document, onClose, onSuccess }: DocumentFormProps
     if (document) {
       setFormData({
         title: document.title,
-        description: document.description,
-        category: document.category,
+        description: document.description || '',
+        category: document.category as 'Treinamento' | 'Projetos' | 'Administrativo',
         drive_link: document.drive_link,
       })
     }
