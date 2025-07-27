@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Search, BookOpen, FileText, Download } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 
-interface SearchResult {
-  id: string
-  title: string
-  type: 'treinamento' | 'entrega'
-  description?: string
-  link?: string
-}
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Search, FileText, Video, Download } from 'lucide-react'
 
 interface SearchInterfaceProps {
   onSectionClick: (section: 'treinamentos' | 'entregas') => void
@@ -19,119 +11,67 @@ interface SearchInterfaceProps {
 
 export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [searchResults, setSearchResults] = useState<any[]>([])
 
-  // Mock data for demonstration
-  const mockData: SearchResult[] = [
-    {
-      id: '1',
-      title: 'Mapeamento de Processos - Treinamento',
-      type: 'treinamento',
-      description: 'Como realizar um mapeamento de processos.',
-      link: 'https://drive.google.com/file/d/example1'
-    },
-    {
-      id: '2',
-      title: 'Mapeamento de Processos - Exemplos de Entregas',
-      type: 'entrega',
-      description: 'Exemplo de mapeamento de uma empresa de frutos bentos.',
-      link: 'https://drive.google.com/file/d/example2'
-    },
-    {
-      id: '3',
-      title: 'Mapeamento de Processos - Exemplos de Entregas',
-      type: 'entrega',
-      description: 'Exemplo de mapeamento de uma empresa do ramo alimentício.',
-      link: 'https://drive.google.com/file/d/example3'
-    },
-    {
-      id: '4',
-      title: 'Treinamento',
-      type: 'treinamento',
-      description: 'Como realizar um mapeamento de processos.',
-      link: 'https://drive.google.com/file/d/example4'
-    },
-    {
-      id: '5',
-      title: 'Mapeamento de Processos - Treinamento',
-      type: 'treinamento',
-      description: 'Quais as entradas e saídas de um processo...',
-      link: 'https://drive.google.com/file/d/example5'
-    }
+  // Dados de exemplo para demonstração
+  const mockData = [
+    { id: 1, title: 'Treinamento React Básico', type: 'Treinamento', category: 'Desenvolvimento' },
+    { id: 2, title: 'Entrega Projeto Alpha', type: 'Entrega', category: 'Projetos' },
+    { id: 3, title: 'Treinamento TypeScript', type: 'Treinamento', category: 'Desenvolvimento' },
+    { id: 4, title: 'Entrega Relatório Q1', type: 'Entrega', category: 'Administrativo' },
   ]
 
-  useEffect(() => {
-    if (searchTerm.trim()) {
+  const handleSearch = (value: string) => {
+    setSearchTerm(value)
+    if (value.trim()) {
       const filtered = mockData.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        item.title.toLowerCase().includes(value.toLowerCase())
       )
       setSearchResults(filtered)
     } else {
       setSearchResults([])
     }
-  }, [searchTerm])
-
-  const handleDownload = (link: string) => {
-    window.open(link, '_blank')
   }
 
   return (
     <div className="space-y-6">
-      {/* Search Bar */}
+      {/* Barra de Pesquisa */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
-          placeholder="PESQUISAR"
+          placeholder="Pesquisar materiais, treinamentos e entregas..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 h-12 text-lg bg-white border-2 border-gray-200 rounded-lg shadow-sm"
+          onChange={(e) => handleSearch(e.target.value)}
+          className="pl-10 py-3 text-lg"
         />
       </div>
 
-      {/* Search Results */}
+      {/* Resultados da Pesquisa */}
       {searchResults.length > 0 && (
-        <Card className="bg-white shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg">Resultados da Pesquisa</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-lg mb-4">Resultados da Pesquisa</h3>
             <div className="space-y-3">
-              {searchResults.map((result) => (
+              {searchResults.map((item) => (
                 <div
-                  key={result.id}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                  key={item.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      {result.type === 'treinamento' ? (
-                        <BookOpen className="h-4 w-4 text-blue-600" />
-                      ) : (
-                        <FileText className="h-4 w-4 text-green-600" />
-                      )}
-                      <h4 className="font-medium text-gray-900">{result.title}</h4>
-                      <Badge 
-                        variant={result.type === 'treinamento' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {result.type === 'treinamento' ? 'Treinamento' : 'Entrega'}
-                      </Badge>
-                    </div>
-                    {result.description && (
-                      <p className="text-sm text-gray-600">{result.description}</p>
+                  <div className="flex items-center gap-3">
+                    {item.type === 'Treinamento' ? (
+                      <Video className="h-5 w-5 text-blue-600" />
+                    ) : (
+                      <FileText className="h-5 w-5 text-green-600" />
                     )}
+                    <div>
+                      <p className="font-medium text-gray-900">{item.title}</p>
+                      <p className="text-sm text-gray-600">{item.category}</p>
+                    </div>
                   </div>
-                  {result.link && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownload(result.link!)}
-                      className="ml-4"
-                    >
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </Button>
-                  )}
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    Acessar
+                  </Button>
                 </div>
               ))}
             </div>
@@ -139,30 +79,40 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
         </Card>
       )}
 
-      {/* Main Cards */}
-      {searchResults.length === 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card 
-            className="bg-slate-700 text-white cursor-pointer hover:bg-slate-600 transition-colors shadow-lg"
-            onClick={() => onSectionClick('treinamentos')}
-          >
-            <CardContent className="flex flex-col items-center justify-center h-40">
-              <BookOpen className="h-12 w-12 mb-4" />
-              <h3 className="text-2xl font-bold">TREINAMENTOS</h3>
-            </CardContent>
-          </Card>
+      {/* Seções Principais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Treinamentos */}
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <CardContent className="p-6 text-center">
+            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Video className="h-8 w-8 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Treinamentos</h3>
+            <p className="text-gray-600 mb-4">
+              Acesse vídeos de treinamento e materiais educativos
+            </p>
+            <Button onClick={() => onSectionClick('treinamentos')} className="w-full">
+              Acessar Treinamentos
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card 
-            className="bg-slate-700 text-white cursor-pointer hover:bg-slate-600 transition-colors shadow-lg"
-            onClick={() => onSectionClick('entregas')}
-          >
-            <CardContent className="flex flex-col items-center justify-center h-40">
-              <FileText className="h-12 w-12 mb-4" />
-              <h3 className="text-2xl font-bold">EXEMPLOS DE ENTREGAS</h3>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        {/* Entregas */}
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <CardContent className="p-6 text-center">
+            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Exemplos de Entregas</h3>
+            <p className="text-gray-600 mb-4">
+              Veja exemplos e modelos de diferentes tipos de entregas
+            </p>
+            <Button onClick={() => onSectionClick('entregas')} className="w-full">
+              Ver Exemplos
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

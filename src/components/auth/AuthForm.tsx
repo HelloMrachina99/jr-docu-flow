@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -5,9 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 import { useToast } from '@/hooks/use-toast'
-import { FileText, Users, BookOpen } from 'lucide-react'
+import { FileText } from 'lucide-react'
 
 export function AuthForm() {
   const [loading, setLoading] = useState(false)
@@ -21,21 +21,30 @@ export function AuthForm() {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) {
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Erro ao fazer login',
+          description: error.message,
+        })
+      } else {
+        toast({
+          title: 'Login realizado com sucesso!',
+          description: 'Bem-vindo ao sistema de documentos.',
+        })
+      }
+    } catch (error) {
+      console.error('Login error:', error)
       toast({
         variant: 'destructive',
-        title: 'Erro ao fazer login',
-        description: error.message,
-      })
-    } else {
-      toast({
-        title: 'Login realizado com sucesso!',
-        description: 'Bem-vindo ao sistema de documentos.',
+        title: 'Erro no login',
+        description: 'Ocorreu um erro inesperado. Tente novamente.',
       })
     }
 
@@ -51,49 +60,59 @@ export function AuthForm() {
     const password = formData.get('password') as string
     const fullName = formData.get('fullName') as string
     
-    // Detect user type based on email
+    // Detectar tipo de usuário baseado no email
     const userType = email.endsWith('@admin') ? 'admin' : 'member'
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          user_type: userType,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            user_type: userType,
+          },
         },
-      },
-    })
-
-    if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Erro ao criar conta',
-        description: error.message,
       })
-    } else if (data.user) {
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          email,
-          full_name: fullName,
-          user_type: userType,
-        })
 
-      if (profileError) {
+      if (error) {
         toast({
           variant: 'destructive',
-          title: 'Erro ao criar perfil',
-          description: profileError.message,
+          title: 'Erro ao criar conta',
+          description: error.message,
         })
-      } else {
-        toast({
-          title: 'Conta criada com sucesso!',
-          description: 'Verifique seu email para confirmar a conta.',
-        })
+      } else if (data.user) {
+        // Criar perfil
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            email,
+            full_name: fullName,
+            user_type: userType,
+          })
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError)
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao criar perfil',
+            description: 'Conta criada mas erro ao salvar perfil.',
+          })
+        } else {
+          toast({
+            title: 'Conta criada com sucesso!',
+            description: 'Você pode fazer login agora.',
+          })
+        }
       }
+    } catch (error) {
+      console.error('Signup error:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Erro no cadastro',
+        description: 'Ocorreu um erro inesperado. Tente novamente.',
+      })
     }
 
     setLoading(false)

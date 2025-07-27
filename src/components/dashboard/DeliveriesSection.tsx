@@ -1,135 +1,180 @@
-import { ArrowLeft, FileText, Folder } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
-interface DeliveryCategory {
-  id: string
-  title: string
-  description: string
-  icon: React.ReactNode
-  color: string
-}
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, FileText, Folder, Download } from 'lucide-react'
 
 interface DeliveriesSectionProps {
   onBack: () => void
 }
 
 export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
-  // Mock delivery categories
-  const deliveryCategories: DeliveryCategory[] = [
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  // Categorias de entregas
+  const deliveryCategories = [
     {
-      id: '1',
-      title: 'Mapeamento de Processos',
-      description: 'Exemplos de entregas de projetos de mapeamento e otimização de processos',
-      icon: <FileText className="h-6 w-6" />,
-      color: 'bg-blue-500 hover:bg-blue-600'
+      id: 'projetos',
+      name: 'Projetos',
+      icon: <Folder className="h-5 w-5" />,
+      color: 'bg-blue-100 text-blue-800',
+      count: 12,
     },
     {
-      id: '2',
-      title: 'Análise Financeira',
-      description: 'Modelos e exemplos de análises financeiras e econômicas',
-      icon: <Folder className="h-6 w-6" />,
-      color: 'bg-green-500 hover:bg-green-600'
+      id: 'relatorios',
+      name: 'Relatórios',
+      icon: <FileText className="h-5 w-5" />,
+      color: 'bg-green-100 text-green-800',
+      count: 8,
     },
     {
-      id: '3',
-      title: 'Planejamento Estratégico',
-      description: 'Exemplos de planos estratégicos e análises de mercado',
-      icon: <FileText className="h-6 w-6" />,
-      color: 'bg-purple-500 hover:bg-purple-600'
+      id: 'apresentacoes',
+      name: 'Apresentações',
+      icon: <FileText className="h-5 w-5" />,
+      color: 'bg-purple-100 text-purple-800',
+      count: 15,
     },
     {
-      id: '4',
-      title: 'Gestão de Pessoas',
-      description: 'Materiais sobre recursos humanos e gestão de equipes',
-      icon: <Folder className="h-6 w-6" />,
-      color: 'bg-orange-500 hover:bg-orange-600'
+      id: 'documentos',
+      name: 'Documentos Técnicos',
+      icon: <FileText className="h-5 w-5" />,
+      color: 'bg-orange-100 text-orange-800',
+      count: 6,
     },
     {
-      id: '5',
-      title: 'Marketing Digital',
-      description: 'Estratégias e campanhas de marketing digital implementadas',
-      icon: <FileText className="h-6 w-6" />,
-      color: 'bg-pink-500 hover:bg-pink-600'
+      id: 'templates',
+      name: 'Templates',
+      icon: <FileText className="h-5 w-5" />,
+      color: 'bg-pink-100 text-pink-800',
+      count: 10,
     },
     {
-      id: '6',
-      title: 'Consultoria Organizacional',
-      description: 'Exemplos de projetos de consultoria e reestruturação',
-      icon: <Folder className="h-6 w-6" />,
-      color: 'bg-indigo-500 hover:bg-indigo-600'
+      id: 'outros',
+      name: 'Outros',
+      icon: <FileText className="h-5 w-5" />,
+      color: 'bg-gray-100 text-gray-800',
+      count: 5,
     },
-    {
-      id: '7',
-      title: 'Pesquisa de Mercado',
-      description: 'Metodologias e resultados de pesquisas realizadas',
-      icon: <FileText className="h-6 w-6" />,
-      color: 'bg-teal-500 hover:bg-teal-600'
-    },
-    {
-      id: '8',
-      title: 'Inovação e Tecnologia',
-      description: 'Projetos relacionados à transformação digital e inovação',
-      icon: <Folder className="h-6 w-6" />,
-      color: 'bg-cyan-500 hover:bg-cyan-600'
-    }
   ]
+
+  // Exemplos de arquivos por categoria (placeholder)
+  const deliveryFiles = {
+    projetos: [
+      { id: 1, name: 'Projeto Sistema Web', type: 'PDF', size: '2.5 MB' },
+      { id: 2, name: 'Aplicativo Mobile', type: 'DOCX', size: '1.8 MB' },
+      { id: 3, name: 'Dashboard Analytics', type: 'PDF', size: '3.2 MB' },
+    ],
+    relatorios: [
+      { id: 1, name: 'Relatório Mensal Q1', type: 'PDF', size: '1.2 MB' },
+      { id: 2, name: 'Análise de Performance', type: 'XLSX', size: '890 KB' },
+    ],
+    apresentacoes: [
+      { id: 1, name: 'Apresentação Cliente A', type: 'PPTX', size: '5.1 MB' },
+      { id: 2, name: 'Pitch Investidores', type: 'PDF', size: '2.8 MB' },
+    ],
+    documentos: [
+      { id: 1, name: 'Documentação API', type: 'PDF', size: '1.5 MB' },
+      { id: 2, name: 'Manual Usuário', type: 'DOCX', size: '2.1 MB' },
+    ],
+    templates: [
+      { id: 1, name: 'Template Proposta', type: 'DOCX', size: '450 KB' },
+      { id: 2, name: 'Template Relatório', type: 'XLSX', size: '320 KB' },
+    ],
+    outros: [
+      { id: 1, name: 'Checklist Qualidade', type: 'PDF', size: '180 KB' },
+      { id: 2, name: 'Guia Processo', type: 'DOCX', size: '750 KB' },
+    ],
+  }
+
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId)
+  }
+
+  const handleBackToCategories = () => {
+    setSelectedCategory(null)
+  }
+
+  const handleDownload = (fileName: string) => {
+    // Placeholder para download
+    console.log(`Downloading: ${fileName}`)
+    // Aqui você implementaria o download real do arquivo
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={onBack}>
+        <Button variant="outline" onClick={selectedCategory ? handleBackToCategories : onBack}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Exemplos de Entregas</h2>
-          <p className="text-muted-foreground">Categorias de projetos e exemplos de entregas realizadas</p>
-        </div>
+        <h2 className="text-2xl font-bold">
+          {selectedCategory ? 
+            deliveryCategories.find(cat => cat.id === selectedCategory)?.name :
+            'Exemplos de Entregas'
+          }
+        </h2>
       </div>
 
-      {/* Delivery Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {deliveryCategories.map((category) => (
-          <Card 
-            key={category.id} 
-            className="cursor-pointer hover:shadow-lg transition-all duration-200 group"
-          >
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className={`${category.color} text-white p-4 rounded-lg transition-colors group-hover:scale-105`}>
+      {/* Categorias ou Arquivos */}
+      {!selectedCategory ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {deliveryCategories.map((category) => (
+            <Card
+              key={category.id}
+              className="cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => handleCategoryClick(category.id)}
+            >
+              <CardContent className="p-6 text-center">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${category.color}`}>
                   {category.icon}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground text-sm mb-2">
-                    {category.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-3">
-                    {category.description}
-                  </p>
+                <h3 className="font-semibold mb-2">{category.name}</h3>
+                <Badge variant="secondary">{category.count} arquivos</Badge>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {deliveryFiles[selectedCategory as keyof typeof deliveryFiles]?.map((file) => (
+            <Card key={file.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gray-100 p-2 rounded">
+                      <FileText className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium">{file.name}</h4>
+                      <p className="text-sm text-gray-600">{file.type} • {file.size}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDownload(file.name)}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {/* Info Card */}
-      <Card className="bg-gray-50 border-gray-200">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="bg-gray-100 p-2 rounded-lg">
-              <Folder className="h-5 w-5 text-gray-600" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900">Sobre os Exemplos de Entregas</h3>
-              <p className="text-sm text-gray-700">
-                Clique em qualquer categoria para explorar exemplos reais de projetos entregues pela nossa empresa júnior.
-                Cada categoria contém modelos, templates e casos de sucesso para inspirar seus projetos.
-              </p>
-            </div>
-          </div>
+      {/* Informações */}
+      <Card className="bg-green-50 border-green-200">
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-green-800 mb-2">📋 Sobre os Exemplos</h3>
+          <p className="text-sm text-green-700">
+            Estes são exemplos de entregas organizados por categoria. Use-os como referência 
+            para seus próprios projetos e entregas. Todos os arquivos são modelos que podem 
+            ser adaptados conforme suas necessidades.
+          </p>
         </CardContent>
       </Card>
     </div>

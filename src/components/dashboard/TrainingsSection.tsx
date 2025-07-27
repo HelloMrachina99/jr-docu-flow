@@ -1,64 +1,62 @@
-import { useState } from 'react'
-import { ArrowLeft, Download, Play } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 
-interface Training {
-  id: string
-  title: string
-  description: string
-  duration: string
-  driveLink: string
-}
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, Download, Play, ExternalLink } from 'lucide-react'
 
 interface TrainingsSectionProps {
   onBack: () => void
 }
 
 export function TrainingsSection({ onBack }: TrainingsSectionProps) {
-  // Mock training data
-  const trainings: Training[] = [
+  // Dados de exemplo para vídeos de treinamento
+  const trainingVideos = [
     {
-      id: '1',
-      title: 'Introdução ao Mapeamento de Processos',
-      description: 'Aprenda os conceitos básicos do mapeamento de processos e como aplicá-los em sua empresa júnior.',
+      id: 1,
+      title: 'Introdução ao React',
       duration: '45 min',
-      driveLink: 'https://drive.google.com/file/d/example1/view'
+      description: 'Conceitos básicos e fundamentos do React',
+      driveLink: 'https://drive.google.com/file/d/1234567890abcdef/view',
+      downloadLink: 'https://drive.google.com/uc?export=download&id=1234567890abcdef',
     },
     {
-      id: '2',
-      title: 'Técnicas Avançadas de Análise',
-      description: 'Domine técnicas avançadas para análise e otimização de processos empresariais.',
+      id: 2,
+      title: 'TypeScript Avançado',
       duration: '60 min',
-      driveLink: 'https://drive.google.com/file/d/example2/view'
+      description: 'Técnicas avançadas de TypeScript para desenvolvimento',
+      driveLink: 'https://drive.google.com/file/d/abcdef1234567890/view',
+      downloadLink: 'https://drive.google.com/uc?export=download&id=abcdef1234567890',
     },
     {
-      id: '3',
-      title: 'Ferramentas de Documentação',
-      description: 'Conheça as principais ferramentas para documentar e visualizar processos.',
-      duration: '30 min',
-      driveLink: 'https://drive.google.com/file/d/example3/view'
+      id: 3,
+      title: 'Gerenciamento de Estado',
+      duration: '35 min',
+      description: 'Context API, Redux e outras ferramentas de estado',
+      driveLink: 'https://drive.google.com/file/d/9876543210fedcba/view',
+      downloadLink: 'https://drive.google.com/uc?export=download&id=9876543210fedcba',
     },
     {
-      id: '4',
-      title: 'Gestão de Projetos em EJ',
-      description: 'Metodologias e boas práticas para gestão de projetos em empresas juniores.',
-      duration: '90 min',
-      driveLink: 'https://drive.google.com/file/d/example4/view'
-    }
+      id: 4,
+      title: 'Testes Automatizados',
+      duration: '55 min',
+      description: 'Jest, Testing Library e boas práticas de teste',
+      driveLink: 'https://drive.google.com/file/d/fedcba0987654321/view',
+      downloadLink: 'https://drive.google.com/uc?export=download&id=fedcba0987654321',
+    },
   ]
 
-  const handleDownload = (driveLink: string) => {
-    // Convert Google Drive view link to download link
-    const fileId = driveLink.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1]
-    if (fileId) {
-      const downloadLink = `https://drive.google.com/uc?export=download&id=${fileId}`
-      window.open(downloadLink, '_blank')
-    } else {
-      // Fallback to original link
-      window.open(driveLink, '_blank')
-    }
+  const handleDownload = (downloadLink: string, title: string) => {
+    // Criar link temporário para download
+    const link = document.createElement('a')
+    link.href = downloadLink
+    link.download = `${title}.mp4`
+    link.target = '_blank'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleViewOnDrive = (driveLink: string) => {
+    window.open(driveLink, '_blank')
   }
 
   return (
@@ -69,62 +67,60 @@ export function TrainingsSection({ onBack }: TrainingsSectionProps) {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Treinamentos</h2>
-          <p className="text-muted-foreground">Vídeos de treinamento para desenvolvimento profissional</p>
-        </div>
+        <h2 className="text-2xl font-bold">Treinamentos</h2>
       </div>
 
-      {/* Training Videos Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {trainings.map((training) => (
-          <Card key={training.id} className="hover:shadow-lg transition-shadow">
+      {/* Lista de Vídeos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {trainingVideos.map((video) => (
+          <Card key={video.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg line-clamp-2">{training.title}</CardTitle>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="secondary" className="text-xs">
-                      <Play className="h-3 w-3 mr-1" />
-                      {training.duration}
-                    </Badge>
-                  </div>
+                <div>
+                  <CardTitle className="text-lg">{video.title}</CardTitle>
+                  <p className="text-sm text-gray-600 mt-1">{video.duration}</p>
+                </div>
+                <div className="bg-blue-100 p-2 rounded-full">
+                  <Play className="h-4 w-4 text-blue-600" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <CardDescription className="line-clamp-3 mb-4">
-                {training.description}
-              </CardDescription>
+              <p className="text-gray-700 mb-4">{video.description}</p>
               
-              <Button
-                onClick={() => handleDownload(training.driveLink)}
-                className="w-full"
-                variant="default"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download do Google Drive
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => handleDownload(video.downloadLink, video.title)}
+                  className="flex-1"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleViewOnDrive(video.driveLink)}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Ver no Drive
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Info Card */}
+      {/* Informações Adicionais */}
       <Card className="bg-blue-50 border-blue-200">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-100 p-2 rounded-lg">
-              <Play className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-medium text-blue-900">Como acessar os vídeos</h3>
-              <p className="text-sm text-blue-700">
-                Clique em "Download do Google Drive" para baixar o vídeo diretamente do nosso repositório.
-                Os vídeos estarão disponíveis em alta qualidade para download.
-              </p>
-            </div>
-          </div>
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-blue-800 mb-2">💡 Dicas para Download</h3>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li>• Os vídeos são armazenados no Google Drive para facilitar o acesso</li>
+            <li>• Use "Download" para baixar diretamente no seu dispositivo</li>
+            <li>• Use "Ver no Drive" para assistir online ou compartilhar</li>
+            <li>• Verifique sua conexão de internet para downloads grandes</li>
+          </ul>
         </CardContent>
       </Card>
     </div>
