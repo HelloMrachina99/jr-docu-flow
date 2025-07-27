@@ -1,12 +1,11 @@
-
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Search, FileText, Video, Download } from 'lucide-react'
+import { Search, FileText, Video, Download, GraduationCap, Package } from 'lucide-react'
 
 interface SearchInterfaceProps {
-  onSectionClick: (section: 'treinamentos' | 'entregas') => void
+  onSectionClick: (section: 'treinamentos' | 'entregas' | 'documentos') => void
 }
 
 export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
@@ -19,6 +18,7 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
     { id: 2, title: 'Entrega Projeto Alpha', type: 'Entrega', category: 'Projetos' },
     { id: 3, title: 'Treinamento TypeScript', type: 'Treinamento', category: 'Desenvolvimento' },
     { id: 4, title: 'Entrega Relatório Q1', type: 'Entrega', category: 'Administrativo' },
+    { id: 5, title: 'Documento API Reference', type: 'Documento', category: 'Técnico' },
   ]
 
   const handleSearch = (value: string) => {
@@ -60,8 +60,10 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
                   <div className="flex items-center gap-3">
                     {item.type === 'Treinamento' ? (
                       <Video className="h-5 w-5 text-blue-600" />
+                    ) : item.type === 'Documento' ? (
+                      <FileText className="h-5 w-5 text-purple-600" />
                     ) : (
-                      <FileText className="h-5 w-5 text-green-600" />
+                      <Package className="h-5 w-5 text-green-600" />
                     )}
                     <div>
                       <p className="font-medium text-gray-900">{item.title}</p>
@@ -80,39 +82,72 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
       )}
 
       {/* Seções Principais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Treinamentos */}
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => onSectionClick('treinamentos')}
+        >
           <CardContent className="p-6 text-center">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Video className="h-8 w-8 text-blue-600" />
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="h-8 w-8 text-blue-600" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Treinamentos</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 className="text-lg font-semibold mb-2">Treinamentos</h3>
+            <p className="text-gray-600 text-sm mb-4">
               Acesse vídeos de treinamento e materiais educativos
             </p>
-            <Button onClick={() => onSectionClick('treinamentos')} className="w-full">
+            <Button className="w-full">
               Acessar Treinamentos
             </Button>
           </CardContent>
         </Card>
 
-        {/* Entregas */}
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => onSectionClick('entregas')}
+        >
           <CardContent className="p-6 text-center">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="h-8 w-8 text-green-600" />
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="h-8 w-8 text-green-600" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Exemplos de Entregas</h3>
-            <p className="text-gray-600 mb-4">
-              Veja exemplos e modelos de diferentes tipos de entregas
+            <h3 className="text-lg font-semibold mb-2">Entregas</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Exemplos de entregas e templates organizados por categoria
             </p>
-            <Button onClick={() => onSectionClick('entregas')} className="w-full">
+            <Button className="w-full">
               Ver Exemplos
             </Button>
           </CardContent>
         </Card>
+
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => onSectionClick('documentos')}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="h-8 w-8 text-purple-600" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Documentos</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Gerencie documentos, projetos e arquivos importantes
+            </p>
+            <Button className="w-full">
+              Gerenciar Documentos
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Informações */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-blue-800 mb-2">💡 Bem-vindo ao DocManager EJ</h3>
+          <p className="text-sm text-blue-700">
+            Use a barra de pesquisa para encontrar rapidamente o que precisa, ou navegue pelas seções 
+            para explorar treinamentos, exemplos de entregas e gerenciar documentos importantes.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

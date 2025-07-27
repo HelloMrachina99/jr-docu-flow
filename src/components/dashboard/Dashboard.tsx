@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { SearchInterface } from './SearchInterface'
 import { TrainingsSection } from './TrainingsSection'
 import { DeliveriesSection } from './DeliveriesSection'
+import { DocumentsSection } from './DocumentsSection'
 import { 
   FileText, 
   LogOut, 
@@ -13,13 +14,13 @@ import {
   Settings
 } from 'lucide-react'
 
-type CurrentView = 'main' | 'treinamentos' | 'entregas'
+type CurrentView = 'main' | 'treinamentos' | 'entregas' | 'documentos'
 
 export function Dashboard() {
   const { profile, signOut } = useAuth()
   const [currentView, setCurrentView] = useState<CurrentView>('main')
 
-  const handleSectionClick = (section: 'treinamentos' | 'entregas') => {
+  const handleSectionClick = (section: 'treinamentos' | 'entregas' | 'documentos') => {
     setCurrentView(section)
   }
 
@@ -75,6 +76,10 @@ export function Dashboard() {
         
         {currentView === 'entregas' && (
           <DeliveriesSection onBack={handleBackToMain} />
+        )}
+        
+        {currentView === 'documentos' && (
+          <DocumentsSection onBack={handleBackToMain} />
         )}
       </div>
     </div>
