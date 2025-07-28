@@ -81,30 +81,16 @@ export function AuthForm() {
           title: 'Erro ao criar conta',
           description: error.message,
         })
+      } else if (data.user && !data.user.email_confirmed_at) {
+        toast({
+          title: 'Confirme seu email!',
+          description: 'Verifique sua caixa de entrada para confirmar seu email antes de fazer login.',
+        })
       } else if (data.user) {
-        // Criar perfil
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: data.user.id,
-            email,
-            full_name: fullName,
-            user_type: userType,
-          })
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError)
-          toast({
-            variant: 'destructive',
-            title: 'Erro ao criar perfil',
-            description: 'Conta criada mas erro ao salvar perfil.',
-          })
-        } else {
-          toast({
-            title: 'Conta criada com sucesso!',
-            description: 'Você pode fazer login agora.',
-          })
-        }
+        toast({
+          title: 'Conta criada com sucesso!',
+          description: 'Você pode fazer login agora.',
+        })
       }
     } catch (error) {
       console.error('Signup error:', error)
