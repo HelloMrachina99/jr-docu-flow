@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -5,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Search, FileText, Video, Download, GraduationCap, Package } from 'lucide-react'
 
 interface SearchInterfaceProps {
-  onSectionClick: (section: 'treinamentos' | 'entregas' | 'documentos') => void
+  onSectionClick: (section: 'treinamentos' | 'entregas') => void
 }
 
 export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
@@ -15,10 +16,9 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
   // Dados de exemplo para demonstração
   const mockData = [
     { id: 1, title: 'Treinamento React Básico', type: 'Treinamento', category: 'Desenvolvimento' },
-    { id: 2, title: 'Entrega Projeto Alpha', type: 'Entrega', category: 'Projetos' },
+    { id: 2, title: 'Exemplo Cakes do Amor', type: 'Entrega', category: 'Projetos' },
     { id: 3, title: 'Treinamento TypeScript', type: 'Treinamento', category: 'Desenvolvimento' },
-    { id: 4, title: 'Entrega Relatório Q1', type: 'Entrega', category: 'Administrativo' },
-    { id: 5, title: 'Documento API Reference', type: 'Documento', category: 'Técnico' },
+    { id: 4, title: 'Exemplo Vest Verde', type: 'Entrega', category: 'Projetos' },
   ]
 
   const handleSearch = (value: string) => {
@@ -35,11 +35,17 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">HOME</h2>
+        <p className="text-gray-600">Sistema de Gestão de Documentos</p>
+      </div>
+
       {/* Barra de Pesquisa */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
-          placeholder="Pesquisar materiais, treinamentos e entregas..."
+          placeholder="Pesquisar treinamentos e exemplos de entregas..."
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-10 py-3 text-lg"
@@ -60,8 +66,6 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
                   <div className="flex items-center gap-3">
                     {item.type === 'Treinamento' ? (
                       <Video className="h-5 w-5 text-blue-600" />
-                    ) : item.type === 'Documento' ? (
-                      <FileText className="h-5 w-5 text-purple-600" />
                     ) : (
                       <Package className="h-5 w-5 text-green-600" />
                     )}
@@ -82,7 +86,7 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
       )}
 
       {/* Seções Principais */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card 
           className="cursor-pointer hover:shadow-lg transition-shadow"
           onClick={() => onSectionClick('treinamentos')}
@@ -109,30 +113,12 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Package className="h-8 w-8 text-green-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Entregas</h3>
+            <h3 className="text-lg font-semibold mb-2">Exemplos de Entregas</h3>
             <p className="text-gray-600 text-sm mb-4">
-              Exemplos de entregas e templates organizados por categoria
+              Acesse exemplos de entregas e materiais de referência
             </p>
             <Button className="w-full">
               Ver Exemplos
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => onSectionClick('documentos')}
-        >
-          <CardContent className="p-6 text-center">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="h-8 w-8 text-purple-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Documentos</h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Gerencie documentos, projetos e arquivos importantes
-            </p>
-            <Button className="w-full">
-              Gerenciar Documentos
             </Button>
           </CardContent>
         </Card>
@@ -144,7 +130,7 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
           <h3 className="font-semibold text-blue-800 mb-2">💡 Bem-vindo ao DocManager EJ</h3>
           <p className="text-sm text-blue-700">
             Use a barra de pesquisa para encontrar rapidamente o que precisa, ou navegue pelas seções 
-            para explorar treinamentos, exemplos de entregas e gerenciar documentos importantes.
+            para explorar treinamentos e exemplos de entregas.
           </p>
         </CardContent>
       </Card>

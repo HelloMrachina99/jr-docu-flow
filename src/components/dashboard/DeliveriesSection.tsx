@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, FileText, Folder, Download } from 'lucide-react'
+import { ArrowLeft, FileText, Folder, Download, ExternalLink } from 'lucide-react'
 
 interface DeliveriesSectionProps {
   onBack: () => void
@@ -19,7 +19,7 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
       name: 'Projetos',
       icon: <Folder className="h-5 w-5" />,
       color: 'bg-blue-100 text-blue-800',
-      count: 12,
+      count: 2,
     },
     {
       id: 'relatorios',
@@ -58,12 +58,23 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
     },
   ]
 
-  // Exemplos de arquivos por categoria (placeholder)
+  // Documentos específicos do Google Drive
   const deliveryFiles = {
     projetos: [
-      { id: 1, name: 'Projeto Sistema Web', type: 'PDF', size: '2.5 MB' },
-      { id: 2, name: 'Aplicativo Mobile', type: 'DOCX', size: '1.8 MB' },
-      { id: 3, name: 'Dashboard Analytics', type: 'PDF', size: '3.2 MB' },
+      { 
+        id: 1, 
+        name: 'Cakes do Amor', 
+        type: 'Google Drive', 
+        size: 'Documento',
+        link: 'https://drive.google.com/file/d/1zaNvrBjfuF_dBwDcqcxxi3EhF62nSZtm/view?usp=drive_link'
+      },
+      { 
+        id: 2, 
+        name: 'Vest Verde', 
+        type: 'Google Drive', 
+        size: 'Documento',
+        link: 'https://drive.google.com/file/d/1U1x0TuX9MRA3elIpwSQSBCRFsQdDvKoj/view?usp=sharing'
+      },
     ],
     relatorios: [
       { id: 1, name: 'Relatório Mensal Q1', type: 'PDF', size: '1.2 MB' },
@@ -95,10 +106,12 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
     setSelectedCategory(null)
   }
 
-  const handleDownload = (fileName: string) => {
-    // Placeholder para download
-    console.log(`Downloading: ${fileName}`)
-    // Aqui você implementaria o download real do arquivo
+  const handleDownload = (fileName: string, link?: string) => {
+    if (link) {
+      window.open(link, '_blank')
+    } else {
+      console.log(`Downloading: ${fileName}`)
+    }
   }
 
   return (
@@ -144,7 +157,11 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="bg-gray-100 p-2 rounded">
-                      <FileText className="h-5 w-5 text-gray-600" />
+                      {file.type === 'Google Drive' ? (
+                        <ExternalLink className="h-5 w-5 text-blue-600" />
+                      ) : (
+                        <FileText className="h-5 w-5 text-gray-600" />
+                      )}
                     </div>
                     <div>
                       <h4 className="font-medium">{file.name}</h4>
@@ -154,10 +171,19 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleDownload(file.name)}
+                    onClick={() => handleDownload(file.name, (file as any).link)}
                   >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
+                    {file.type === 'Google Drive' ? (
+                      <>
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Abrir
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
@@ -172,8 +198,8 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
           <h3 className="font-semibold text-green-800 mb-2">📋 Sobre os Exemplos</h3>
           <p className="text-sm text-green-700">
             Estes são exemplos de entregas organizados por categoria. Use-os como referência 
-            para seus próprios projetos e entregas. Todos os arquivos são modelos que podem 
-            ser adaptados conforme suas necessidades.
+            para seus próprios projetos e entregas. Os documentos em destaque são materiais 
+            específicos disponíveis no Google Drive.
           </p>
         </CardContent>
       </Card>
