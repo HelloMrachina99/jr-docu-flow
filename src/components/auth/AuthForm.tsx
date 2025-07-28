@@ -22,18 +22,33 @@ export function AuthForm() {
     const password = formData.get('password') as string
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Erro ao fazer login',
-          description: error.message,
-        })
-      } else {
+        // Mensagem mais específica para email não confirmado
+        if (error.message.includes('Email not confirmed')) {
+          toast({
+            variant: 'destructive',
+            title: 'Email não confirmado',
+            description: 'Verifique sua caixa de entrada e confirme seu email antes de fazer login.',
+          })
+        } else if (error.message.includes('Invalid login credentials')) {
+          toast({
+            variant: 'destructive',
+            title: 'Credenciais inválidas',
+            description: 'Email ou senha incorretos. Verifique seus dados e tente novamente.',
+          })
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao fazer login',
+            description: error.message,
+          })
+        }
+      } else if (data.user) {
         toast({
           title: 'Login realizado com sucesso!',
           description: 'Bem-vindo ao sistema de documentos.',
@@ -68,6 +83,7 @@ export function AuthForm() {
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: fullName,
             user_type: userType,
