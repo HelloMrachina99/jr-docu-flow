@@ -83,7 +83,7 @@ export function AuthForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/?confirmed=true`,
           data: {
             full_name: fullName,
             user_type: userType,
@@ -92,15 +92,24 @@ export function AuthForm() {
       })
 
       if (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Erro ao criar conta',
-          description: error.message,
-        })
+        // Se o usuário já existe, mostra mensagem específica
+        if (error.message.includes('already registered')) {
+          toast({
+            variant: 'destructive',
+            title: 'Email já cadastrado',
+            description: 'Este email já possui uma conta. Tente fazer login ou use outro email.',
+          })
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao criar conta',
+            description: error.message,
+          })
+        }
       } else if (data.user && !data.user.email_confirmed_at) {
         toast({
           title: 'Confirme seu email!',
-          description: 'Verifique sua caixa de entrada para confirmar seu email antes de fazer login.',
+          description: 'Enviamos um link de confirmação para seu email. Clique no link para ativar sua conta.',
         })
       } else if (data.user) {
         toast({
