@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +13,7 @@ import { FileText } from 'lucide-react'
 export function AuthForm() {
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -53,6 +55,8 @@ export function AuthForm() {
           title: 'Login realizado com sucesso!',
           description: 'Bem-vindo ao sistema de documentos.',
         })
+        // Redirecionamento para a página principal
+        navigate('/')
       }
     } catch (error) {
       console.error('Login error:', error)
