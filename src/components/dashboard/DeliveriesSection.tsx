@@ -1,16 +1,22 @@
 
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, FileText, Folder, Download, ExternalLink } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { ArrowLeft, FileText, Folder, Download, ExternalLink, Plus } from 'lucide-react'
 
 interface DeliveriesSectionProps {
   onBack: () => void
 }
 
 export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const { profile } = useAuth()
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('projetos')
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
 
   // Categorias de entregas
   const deliveryCategories = [
@@ -114,92 +120,88 @@ export function DeliveriesSection({ onBack }: DeliveriesSectionProps) {
     }
   }
 
+  const handleAddDelivery = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    // Aqui seria implementada a lógica para adicionar a entrega
+    setIsUploadDialogOpen(false)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={selectedCategory ? handleBackToCategories : onBack}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
-        <h2 className="text-2xl font-bold">
-          {selectedCategory ? 
-            deliveryCategories.find(cat => cat.id === selectedCategory)?.name :
-            'Exemplos de Entregas'
-          }
-        </h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
+          <h2 className="text-2xl font-bold">Projetos</h2>
+        </div>
+        
+        {profile?.user_type === 'admin' && (
+          <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Projeto
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Adicionar Novo Projeto</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddDelivery} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Título</Label>
+                  <Input id="title" name="title" placeholder="Nome do projeto" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="driveLink">Link do Google Drive</Label>
+                  <Input id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." required />
+                </div>
+                <Button type="submit" className="w-full">Adicionar</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
-      {/* Categorias ou Arquivos */}
-      {!selectedCategory ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {deliveryCategories.map((category) => (
-            <Card
-              key={category.id}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <CardContent className="p-6 text-center">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${category.color}`}>
-                  {category.icon}
-                </div>
-                <h3 className="font-semibold mb-2">{category.name}</h3>
-                <Badge variant="secondary">{category.count} arquivos</Badge>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {deliveryFiles[selectedCategory as keyof typeof deliveryFiles]?.map((file) => (
-            <Card key={file.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-gray-100 p-2 rounded">
-                      {file.type === 'Google Drive' ? (
-                        <ExternalLink className="h-5 w-5 text-blue-600" />
-                      ) : (
-                        <FileText className="h-5 w-5 text-gray-600" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{file.name}</h4>
-                      <p className="text-sm text-gray-600">{file.type} • {file.size}</p>
-                    </div>
+      {/* Lista de Projetos */}
+      <div className="space-y-4">
+        {deliveryFiles.projetos?.map((file) => (
+          <Card key={file.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-gray-100 p-2 rounded">
+                    <ExternalLink className="h-5 w-5 text-blue-600" />
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDownload(file.name, (file as any).link)}
-                  >
-                    {file.type === 'Google Drive' ? (
-                      <>
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Abrir
-                      </>
-                    ) : (
-                      <>
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </>
-                    )}
-                  </Button>
+                  <div>
+                    <h4 className="font-medium">{file.name}</h4>
+                    <p className="text-sm text-gray-600">{file.type} • {file.size}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownload(file.name, (file as any).link)}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Abrir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* Informações */}
       <Card className="bg-green-50 border-green-200">
         <CardContent className="p-4">
-          <h3 className="font-semibold text-green-800 mb-2">📋 Sobre os Exemplos</h3>
+          <h3 className="font-semibold text-green-800 mb-2">📋 Sobre os Projetos</h3>
           <p className="text-sm text-green-700">
-            Estes são exemplos de entregas organizados por categoria. Use-os como referência 
-            para seus próprios projetos e entregas. Os documentos em destaque são materiais 
-            específicos disponíveis no Google Drive.
+            Estes são exemplos de projetos desenvolvidos. Use-os como referência 
+            para seus próprios projetos. Todos os documentos estão disponíveis no Google Drive.
           </p>
         </CardContent>
       </Card>

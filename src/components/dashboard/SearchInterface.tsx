@@ -127,7 +127,7 @@ export function SearchInterface({ onSectionClick }: SearchInterfaceProps) {
       {/* Informações */}
       <Card className="bg-blue-50 border-blue-200">
         <CardContent className="p-4">
-          <h3 className="font-semibold text-blue-800 mb-2">💡 Bem-vindo ao DocManager EJ</h3>
+          <h3 className="font-semibold text-blue-800 mb-2">💡 Bem-vindo ao DEJAPP</h3>
           <p className="text-sm text-blue-700">
             Use a barra de pesquisa para encontrar rapidamente o que precisa, ou navegue pelas seções 
             para explorar treinamentos e exemplos de entregas.

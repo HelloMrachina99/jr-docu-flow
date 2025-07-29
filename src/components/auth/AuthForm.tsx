@@ -75,8 +75,8 @@ export function AuthForm() {
     const password = formData.get('password') as string
     const fullName = formData.get('fullName') as string
     
-    // Detectar tipo de usuário baseado no email
-    const userType = email.endsWith('@admin') ? 'admin' : 'member'
+    // Apenas ra125119@uem.br pode ser admin
+    const userType = email === 'ra125119@uem.br' ? 'admin' : 'user'
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -138,7 +138,7 @@ export function AuthForm() {
               <FileText className="h-8 w-8" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">DocManager EJ</h1>
+          <h1 className="text-3xl font-bold text-foreground">DEJAPP</h1>
           <p className="text-muted-foreground mt-2">Sistema de Gestão de Documentos</p>
         </div>
 
@@ -221,8 +221,8 @@ export function AuthForm() {
                     <Label>Tipo de Usuário</Label>
                     <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
                       <p className="font-medium text-blue-800 mb-1">Detecção Automática</p>
-                      <p>• Use <span className="font-mono bg-white px-1 rounded">@admin</span> no final do e-mail para acesso administrativo</p>
-                      <p>• Outros e-mails serão considerados membros automaticamente</p>
+                      <p>• O email <span className="font-mono bg-white px-1 rounded">ra125119@uem.br</span> terá acesso administrativo</p>
+                      <p>• Outros e-mails serão considerados usuários automaticamente</p>
                     </div>
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
